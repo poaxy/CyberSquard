@@ -464,3 +464,17 @@ Exiting script
 - **Test Environment**: Use on a test system first.
 - **Backups**: Manually back up critical data beyond SSH config.
 - **Firewall Changes**: May disrupt active connections.
+
+---
+
+## License
+
+This script is provided under the MIT License. Feel free to modify and distribute it as needed.
+
+---
+
+## Disclaimer
+
+This script is provided as-is, without any warranties. Use it at your own risk. The author is not responsible for any damage or data loss caused by the use of this script.
+
+---
