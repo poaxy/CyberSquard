@@ -12,7 +12,7 @@ This Bash script provides a menu-driven interface for system administration task
 
 To make the script executable:
 ```bash
-chmod +x sysadmin.sh
+chmod +x CyberSquad-script.sh
 ```
 
 ---
@@ -23,13 +23,8 @@ chmod +x sysadmin.sh
 2. **Make it Executable**: Run the command above.
 3. **Execute the Script**: Use one of these commands:
    ```bash
-   ./sysadmin.sh
+   sudo ./CyberSquad-script.sh
    ```
-   or
-   ```bash
-   sudo ./sysadmin.sh
-   ```
-   - Running with `sudo` is recommended to avoid repeated prompts.
 4. **Navigate**: Interact with the menu using numeric inputs (0-6).
 
 The script displays a colorful banner and a main menu. After each operation, press `Enter` to return to the main menu.
