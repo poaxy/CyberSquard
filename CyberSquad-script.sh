@@ -1,11 +1,16 @@
 #!/bin/bash
 
+# This script is a comprehensive system management tool created by the Cybersquad team.
+# It provides functionalities for system information display, updates, SSH configuration,
+# user management, firewall management, and automation tasks through a user-friendly menu interface.
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 OPTION_GREEN='\033[0;32m'
 NC='\033[0m'
 
+# Sets up logging directory and files for the script
 setup_logging() {
     if [ ! -d "/var/log/script_logs" ]; then
         sudo mkdir -p /var/log/script_logs
@@ -24,23 +29,27 @@ setup_logging() {
     sudo chmod 644 /var/log/script_logs/events.log
 }
 
+# Logs error messages to the error log file
 log_error() {
     local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
     echo -e "\n${RED}[ERROR] $1${NC}"
     echo "[ERROR] $timestamp - $1" | sudo tee -a /var/log/script_logs/error.log > /dev/null
 }
 
+# Logs success messages to the events log file
 log_success() {
     local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
     echo -e "\n${GREEN}[SUCCESS] $1${NC}"
     echo "[SUCCESS] $timestamp - $1" | sudo tee -a /var/log/script_logs/events.log > /dev/null
 }
 
+# Displays warning messages in the terminal
 log_warning() {
     local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
     echo -e "\n${YELLOW}[WARNING] $1${NC}"
 }
 
+# Displays a colorful banner for the script
 display_banner() {
     R='\033[38;5;196m'
     O='\033[38;5;202m'
@@ -59,6 +68,7 @@ display_banner() {
     echo -e "${B}        /${I}____/                 ${BLINK}${V}        /_/          ${R}                 ${NC}"
 }
 
+# Adds a cron job if it doesn't already exist
 add_cron_job() {
     local cron_command="$1"
     if crontab -l 2>/dev/null | grep -F "$cron_command" > /dev/null; then
@@ -74,6 +84,7 @@ add_cron_job() {
     fi
 }
 
+# Sets up automated system updates via cron job
 setup_system_update() {
     echo -e "\n${GREEN}===== Automated System Update =====${NC}"
     local update_command=""
@@ -101,6 +112,7 @@ setup_system_update() {
     return 0
 }
 
+# Sets up automated temporary file cleaning via cron job
 setup_temp_cleaning() {
     echo -e "\n${GREEN}===== Automated Temporary File Cleaning =====${NC}"
     local clean_command="0 4 * * * find /tmp -type f -mtime +1 -delete >> /var/log/script_logs/events.log 2>> /var/log/script_logs/error.log"
@@ -114,6 +126,7 @@ setup_temp_cleaning() {
     return 0
 }
 
+# Sets up automated backups via cron job
 setup_backup() {
     echo -e "\n${GREEN}===== Automated Backup =====${NC}"
     local source=""
@@ -161,6 +174,7 @@ setup_backup() {
     return 0
 }
 
+# Main automation menu handler
 automation() {
     echo -e "\n${GREEN}===== Automation =====${NC}"
     while true; do
@@ -190,6 +204,7 @@ automation() {
     done
 }
 
+# Ensures basic firewall rules for established connections
 ensure_firewall_rules() {
     if ! sudo iptables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 2>/dev/null; then
         sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
@@ -199,6 +214,7 @@ ensure_firewall_rules() {
     fi
 }
 
+# Displays comprehensive system information
 display_system_info() {
     echo -e "\n${GREEN}===== System Information =====${NC}"
     echo -e "\n${GREEN}Linux Distribution:${NC}"
@@ -236,6 +252,7 @@ display_system_info() {
     log_success "System information displayed successfully"
 }
 
+# Performs a full system update using the appropriate package manager
 update_system() {
     echo -e "\n${GREEN}===== System Update =====${NC}"
     if command -v apt &> /dev/null; then
@@ -272,6 +289,7 @@ update_system() {
     return 0
 }
 
+# Configures SSH server with user-specified settings
 configure_ssh() {
     echo -e "\n${GREEN}===== SSH Configuration =====${NC}"
     if ! command -v ssh &> /dev/null; then
@@ -393,6 +411,7 @@ configure_ssh() {
     return 0
 }
 
+# Adds a new system user
 add_user() {
     echo -e "\n${GREEN}===== Add User =====${NC}"
     local current_user=$(whoami)
@@ -427,6 +446,7 @@ add_user() {
     fi
 }
 
+# Deletes an existing system user
 delete_user() {
     echo -e "\n${GREEN}===== Delete User =====${NC}"
     local current_user=$(whoami)
@@ -461,6 +481,7 @@ delete_user() {
     fi
 }
 
+# Manages sudo privileges for users
 manage_user() {
     echo -e "\n${GREEN}===== Manage User =====${NC}"
     echo -e "\n${GREEN}List of Users:${NC}"
@@ -548,6 +569,7 @@ manage_user() {
     return 0
 }
 
+# Main user management menu handler
 user_management() {
     echo -e "\n${GREEN}===== User Management =====${NC}"
     while true; do
@@ -577,6 +599,7 @@ user_management() {
     done
 }
 
+# Displays current firewall rules
 view_firewall_rules() {
     echo -e "\n${GREEN}===== Current Firewall Rules =====${NC}"
     if command -v iptables &> /dev/null; then
@@ -591,6 +614,7 @@ view_firewall_rules() {
     return 0
 }
 
+# Flushes all firewall rules and reapplies basic rules
 flush_firewall_rules() {
     echo -e "\n${GREEN}===== Flush Firewall Rules =====${NC}"
     echo -e "\n${YELLOW}Are you sure you want to flush all iptables rules? (y/n)${NC}"
@@ -619,6 +643,7 @@ flush_firewall_rules() {
     return 0
 }
 
+# Sets default firewall policies for chains
 set_default_policies() {
     echo -e "\n${GREEN}===== Set Default Policies =====${NC}"
     if ! command -v iptables &> /dev/null; then
@@ -666,6 +691,7 @@ set_default_policies() {
     return 0
 }
 
+# Manages port opening/closing in firewall
 manage_ports() {
     echo -e "\n${GREEN}===== Manage Ports =====${NC}"
     if ! command -v iptables &> /dev/null; then
@@ -798,6 +824,7 @@ manage_ports() {
     done
 }
 
+# Manages IP address blocking/unblocking
 manage_ip_addresses() {
     echo -e "\n${GREEN}===== Manage IP Addresses =====${NC}"
     if ! command -v iptables &> /dev/null; then
@@ -890,6 +917,7 @@ manage_ip_addresses() {
     done
 }
 
+# Handles saving and restoring firewall rules
 manage_rule_persistence() {
     echo -e "\n${GREEN}===== Save and Restore Firewall Rules =====${NC}"
     if ! command -v iptables &> /dev/null; then
@@ -949,6 +977,7 @@ manage_rule_persistence() {
     done
 }
 
+# Applies predefined firewall rule sets
 apply_firewall_presets() {
     echo -e "\n${GREEN}===== Common Firewall Presets =====${NC}"
     if ! command -v iptables &> /dev/null; then
@@ -1062,6 +1091,7 @@ apply_firewall_presets() {
     done
 }
 
+# Main firewall management menu handler
 firewall_management() {
     echo -e "\n${GREEN}===== Firewall Management =====${NC}"
     ensure_firewall_rules
@@ -1090,8 +1120,7 @@ firewall_management() {
     done
 }
 
-setup_logging
-
+# Displays the main menu interface
 display_menu() {
     display_banner
     echo
@@ -1106,6 +1135,8 @@ display_menu() {
     echo -ne "\nEnter your choice: "
 }
 
+# Main script execution - sets up logging and displays menu
+setup_logging
 while true; do
     display_menu
     read choice
